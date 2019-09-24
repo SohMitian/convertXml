@@ -1,6 +1,7 @@
 const fs = require('fs');
 const che = require('cheerio');
 const kuromoji = require('kuromoji');
+const xmlBuilder = require('xmlbuilder');
 
 // 文中の空白を削除する関数
 function dispAry(text) {
@@ -10,7 +11,7 @@ function dispAry(text) {
 postArry = ['代表取締役', '支配人', '社員', '代表社員'];
 
 // XMLファイル読み込み
-const xml_data = fs.readFileSync("from.xml", "utf-8");
+const xml_data = fs.readFileSync("before.xml", "utf-8");
 const $ = che.load(xml_data);
 
 // XMLの「name」タグを読み込み
@@ -52,4 +53,15 @@ builder.build(function(err, tokenizer) {
   // xmlNameの調整
   console.log(postName);
   console.log(name);
+  let xml = xmlBuilder.create('delegate')
+  .ele('postName', postName).up()
+  .ele('name', name).up()
+    .end({ pretty: true });
+  
+  fs.writeFile("./after.xml", xml, err => {
+    if(err) {
+      console.log(err);
+    }
+  });
+// console.log(xml);
 });
